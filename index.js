@@ -4,10 +4,21 @@ const OpenAI = require('openai');
 require('dotenv').config();
 
 const app = express();
-app.use(cors());
+
+// Enhanced CORS configuration
+app.use(cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+}));
+
 app.use(express.json());
 
 const PORT = 3001;
+
+// Handle preflight requests
+app.options('/api/chat', cors());
 
 app.post('/api/chat', async (req, res) => {
     const { message, history } = req.body;
