@@ -17,8 +17,14 @@ app.use(express.json());
 
 const PORT = 3001;
 
-// Handle preflight requests
-app.options('/api/chat', cors());
+// Handle preflight requests with explicit 204 response
+app.options('/api/chat', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.status(204).end();
+});
 
 app.post('/api/chat', async (req, res) => {
     const { message, history } = req.body;
@@ -27,6 +33,11 @@ app.post('/api/chat', async (req, res) => {
     if (!apiKey) {
         return res.status(500).json({ error: 'Server is missing OpenAI API Key' });
     }
+
+    // Set up CORS headers
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
     // Set up SSE headers
     res.setHeader('Content-Type', 'text/event-stream');
